@@ -3,10 +3,10 @@ import { ActorStrategy, isActorPlayer, isActorStrategy } from "@/actor/type";
 import { gameActorStrategyFactory } from "./strategies/factory";
 import { IGameActorStrategy } from "./strategies/ActorStrategy";
 import { GameState, GameStatus } from "./type";
-import { AbstractGame } from "./Game";
+import { AbstractGame, IGame } from "./Game";
 
 // ********************************************************************************
-export interface ISoloStrategyGame {
+export interface ISoloStrategyGame extends IGame {
   /** the {@link ActorStrategy} that is playing the game against the player */
   actorStrategy: IGameActorStrategy;
 }
@@ -45,6 +45,7 @@ export class SoloStrategyGame extends AbstractGame implements ISoloStrategyGame 
 
         const action = await this.actorStrategy.requestAction(state);
         this.makeAction(action);
+        return/*nothing else to do*/;
       }
       default: throw new Error(`Unknown state: ${state}`);
     }
