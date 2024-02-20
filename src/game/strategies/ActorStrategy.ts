@@ -17,7 +17,7 @@ export abstract class GameActorStrategy {
 
   // == Public API ================================================================
   /** creates an Action from the current state for the actor following this strategy */
-  public requestAction(state: GameState){
+  public async requestAction(state: GameState){
     // validate the state
     if(state.status !== GameStatus.InProgress) throw new Error(`Actor (${this.actor.id}) is not allowed to play in the current state: ${state.status}`);
     if(state.actorId !== this.actor.id) throw new Error(`The actor ${this.actor.id} is not allowed to play`);
