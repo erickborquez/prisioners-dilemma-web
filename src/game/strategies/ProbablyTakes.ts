@@ -9,6 +9,7 @@ export class GameActorStrategyProbablyTake extends GameActorStrategy {
         await new Promise(resolve => setTimeout(resolve, Math.random() * 2000));
 
         // ignore the state and takes with 'p' probability
-        return { actorId: this.actor.id, action: randomChoice(0.7)};
+        const probability: number = 0.7;
+        return { actorId: this.actor.id, action: randomChoice(probability)};
     }
 }
