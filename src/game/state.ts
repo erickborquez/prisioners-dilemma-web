@@ -1,19 +1,21 @@
-import { GameAction, GameSpec, GameState, GameStatus, isGameStateIdle, isGameStateInProgress } from "./type";
+import { GameAction, GameSpec, GameState, GameStatus, isGameStateEnded, isGameStateIdle, isGameStateInProgress } from "./type";
 
 // ********************************************************************************
 /** applies the action to the game state */
 export const applyAction = (spec: GameSpec, state: GameState, action: GameAction): GameState => {
   // validate the action
-  if(!isGameStateInProgress(state) || isGameStateIdle(state)) throw new Error(`The game is not in progress`);
+  if(isGameStateEnded(state)) throw new Error(`The game is not in progress`);
   if(state.actorId !== action.actorId) throw new Error(`The actor ${action.actorId} is not allowed to play`);
-  if(state.history.length >= spec.maxActions) throw new Error(`The game has ended`);
+  const history = isGameStateIdle(state) ? [/*new history*/] : state.history,
+        actionIndex = isGameStateIdle(state) ? 0 : state.actionIndex;
+  if(actionIndex >= spec.maxActions) throw new Error(`The game has ended`);
   
   // apply the action
-  const nextHistory = [...state.history, action];
-  const nextAction = state.action + 1;
+  const nextHistory = [...history , action],
+        nextActionIndex = actionIndex + 1;
 
   // check if the game has ended
-  if(nextAction >= spec.maxActions) return {
+  if(nextActionIndex === spec.maxActions) return {
     spec,
 
     status: GameStatus.Ended,
@@ -30,7 +32,7 @@ export const applyAction = (spec: GameSpec, state: GameState, action: GameAction
 
     status: GameStatus.InProgress,
 
-    action: nextAction,
+    actionIndex: nextActionIndex,
     history: nextHistory,
     actorId: nextActorId
   };
