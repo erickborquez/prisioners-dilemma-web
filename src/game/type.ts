@@ -67,7 +67,7 @@ export type GameStateInProgress = GameStateBase & {
   status: GameStatus.InProgress;
 
   /** the current action number */
-  action: number;
+  actionIndex: number;
 
   /** the history of the game */
   history: GameStateHistory;
