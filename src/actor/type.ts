@@ -28,6 +28,8 @@ export const isActorPlayer = (actor: Actor): actor is ActorPlayer => actor.type 
 export enum ActorStrategyType {
   AlwaysSplit = 'always-split',
   AlwaysTake = 'always-take',
+  Random = 'random',
+  Probability = 'Probability p Cooperator',
 }
 
 export type ActorStrategy = ActorBase & {
