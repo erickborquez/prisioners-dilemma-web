@@ -18,7 +18,6 @@ export interface IGame {
   onState$(): BehaviorSubject<GameState>;
 }
 
-// ================================================================================
 export class AbstractGame implements IGame {
   /** an Observable that emits the current state of the Game */
   protected readonly state$: BehaviorSubject<GameState>;
@@ -33,7 +32,7 @@ export class AbstractGame implements IGame {
   private createInitialState(): GameStateIdle {
     // first actor starts the game
     const actorId = this.spec.actors[0].id;
-    return { status: GameStatus.Idle, spec: this.spec, actorId };
+    return { status: GameStatus.Idle, spec: this.spec, actorId, points: {/*initially no points*/ }};
   }
 
   // == Observable ================================================================

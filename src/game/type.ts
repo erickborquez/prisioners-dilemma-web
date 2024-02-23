@@ -46,13 +46,6 @@ export enum GameActionType {
   Take = 'take',
 }
 
-export const getGameActionPoints = (spec: GameSpec, action: GameActionType, otherAction: GameActionType): GamePoints => {
-  if(action === GameActionType.Split && otherAction === GameActionType.Split) return spec.splitSplitPoints;
-  if(action === GameActionType.Split && otherAction === GameActionType.Take) return spec.splitTakePoints;
-  if(action === GameActionType.Take && otherAction === GameActionType.Split) return spec.takeSplitPoints;
-  return spec.takeTakePoints;
-}
-
 // -- Turn ------------------------------------------------------------------------
 export type GameAction = {
   /** the actor that made the action */

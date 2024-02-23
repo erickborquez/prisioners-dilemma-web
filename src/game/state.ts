@@ -1,4 +1,5 @@
-import { getGameActionPoints, isCompleteRound, isGameStateEnded, isGameStateIdle, GameAction, GamePointsMap, GameSpec, GameState, GameStateHistory, GameStateRound, GameStatus } from "./type";
+import { isCompleteRound, isGameStateEnded, isGameStateIdle, GameAction, GamePointsMap, GameSpec, GameState, GameStateHistory, GameStateRound, GameStatus } from "./type";
+import { getGameActionPoints } from "./util";
 
 // ********************************************************************************
 /** applies the action to the game state */
