@@ -1,9 +1,48 @@
+import { Box } from "@chakra-ui/react";
 import Head from "next/head";
+import { useState } from "react"
 
+import { ActorPlayer, ActorStrategy, ActorStrategyType, ActorType } from "@/actor/type"
+import { useObservable } from "@/util/hook/useObservable";
 import { SoloStrategyGameComponent } from "@/game/component/SoloStrategyGame";
+import { SoloStrategyGame } from "@/game/SoloStrategyGame";
+import { GameSpec } from "@/game/type";
+
+// ********************************************************************************
+// TODO: use non-hardcoded data
+const actorPlayer: ActorPlayer = {
+  id: 'player',
+  type: ActorType.Player,
+
+  name: 'Player',
+};
+
+const actorStrategy: ActorStrategy = {
+  id: 'strategy',
+  type: ActorType.Strategy,
+
+  name: 'Strategy',
+  strategy: ActorStrategyType.AlwaysTake,
+};
+
+const gameSpec: GameSpec = {
+  actors: [actorPlayer, actorStrategy],
+
+  maxRounds: 6,
+
+  splitSplitPoints: 3,
+  splitTakePoints: 0,
+  takeSplitPoints: 5,
+  takeTakePoints: 1,
+}
 
 // ********************************************************************************
 export default function Home() {
+  const [game] = useState(new SoloStrategyGame(gameSpec));
+  const [state] = useObservable('SoloStrategyGameComponent', () => game.onState$(), [game]);
+
+  if(!state) return <div>Loading...</div>;
+
   return (
     <>
       <Head>
@@ -13,7 +52,15 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-        <SoloStrategyGameComponent />
+        <Box width='100%' maxWidth='400px' margin='auto' paddingTop='20vh'>
+          {state && (
+            <SoloStrategyGameComponent
+              game={game}
+              state={state}
+              actorPlayerId={actorPlayer.id}
+            />
+          )}
+        </Box>
       </main>
     </>
   );
