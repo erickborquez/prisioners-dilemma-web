@@ -1,4 +1,4 @@
-import { isCompleteRound, isGameStateEnded, isGameStateIdle, GameAction, GamePointsMap, GameSpec, GameState, GameStateHistory, GameStateRound, GameStatus } from "./type";
+import { isCompleteRound, isGameStateEnded, isGameStateIdle, GameAction, GamePointsMap, GameSpec, GameState, GameStateHistory, GameStateRound, GameStatus, isGameEnded } from "./type";
 import { getGameActionPoints } from "./util";
 
 // ********************************************************************************
@@ -8,7 +8,7 @@ export const applyAction = (spec: GameSpec, state: GameState, action: GameAction
   if(isGameStateEnded(state)) throw new Error(`The game is not in progress`);
   if(state.actorId !== action.actorId) throw new Error(`The actor ${action.actorId} is not allowed to play`);
   const history = isGameStateIdle(state) ? [/*new history*/] : state.history;
-  if(history.length >= spec.maxRounds) throw new Error(`The game has ended`);
+  if(isGameEnded(spec, history)) throw new Error(`The game has ended`);
   
   // apply the action to the current round or create a new round
   let nextHistory = [...history];
@@ -30,8 +30,9 @@ export const applyAction = (spec: GameSpec, state: GameState, action: GameAction
   // calculate the points
   const points = getTotalPoints(spec, nextHistory);
 
-  // check if the game has ended
-  if(nextHistory.length >= spec.maxRounds){
+  // check if the game has ended by the number of rounds and verify if the last
+  // round is complete
+  if(isGameEnded(spec, nextHistory)){
     return {
       spec,
 

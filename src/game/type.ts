@@ -65,6 +65,8 @@ export const isCompleteRound = (round: GameStateRound): round is [GameAction, Ga
  *  and so on. */
 export type GameStateHistory = GameStateRound[];
 
+export const isGameEnded = (spec: GameSpec, history: GameStateHistory): boolean => history.length >= spec.maxRounds && isCompleteRound(history[history.length - 1]);
+
 // -- State -----------------------------------------------------------------------
 export enum GameStatus {
   /** the game is not yet started */
