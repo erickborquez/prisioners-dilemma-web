@@ -2,15 +2,39 @@ import { Actor, ActorIdentifier } from "@/actor/type";
 
 // ********************************************************************************
 // == Game ========================================================================
+// -- Points ----------------------------------------------------------------------
+/** the points that the actor receive in the game */
+export type GamePoints = number/*alias*/;
+
+/** a map of the points that the actors have in the game */
+export type GamePointsMap = Record<ActorIdentifier, GamePoints>;
+
 // -- Spec ------------------------------------------------------------------------
 export type GameSpec = {
-  /** the maximum number of actions in the game before it ends */
-  maxActions: number;
+  /** the maximum number of rounds in the game before it ends */
+  maxRounds: number;
 
   /** the actors in the game */
   // NOTE: the first actor is the one that starts the game
   // NOTE: it will always be two actors
   actors: Actor[];
+
+  // .. Points ....................................................................
+  /** the reward that the user take when it does {@link GameActionType.Split} and the
+   *  other does {@link GameActionType.Split} */
+  splitSplitPoints: GamePoints;
+
+  /** the reward that the user take when it does {@link GameActionType.Split} and the
+   *  other does {@link GameActionType.Take} */
+  splitTakePoints: GamePoints;
+
+  /** the reward that the user take when it does {@link GameActionType.Take} and the
+   * other does {@link GameActionType.Split} */
+  takeSplitPoints: GamePoints;
+
+  /** the reward that the user take when it does {@link GameActionType.Take} and the
+   *  other does {@link GameActionType.Take} */
+  takeTakePoints: GamePoints;
 }
 
 // -- Action ----------------------------------------------------------------------
@@ -20,6 +44,13 @@ export enum GameActionType {
   
   /** the player takes the reward */
   Take = 'take',
+}
+
+export const getGameActionPoints = (spec: GameSpec, action: GameActionType, otherAction: GameActionType): GamePoints => {
+  if(action === GameActionType.Split && otherAction === GameActionType.Split) return spec.splitSplitPoints;
+  if(action === GameActionType.Split && otherAction === GameActionType.Take) return spec.splitTakePoints;
+  if(action === GameActionType.Take && otherAction === GameActionType.Split) return spec.takeSplitPoints;
+  return spec.takeTakePoints;
 }
 
 // -- Turn ------------------------------------------------------------------------
@@ -32,11 +63,14 @@ export type GameAction = {
 }
 
 // .. History .....................................................................
+export type GameStateRound = [GameAction, GameAction | null/*no action yet*/];
+export const isCompleteRound = (round: GameStateRound): round is [GameAction, GameAction] => round[1] !== null;
+
 /** an ordered list of the actions in the game in chronological order. The two actors
  *  take actions making actions. That is, the first action is made by the first actor, the
  *  second action is made by the second actor, the third action is made by the first actor,
  *  and so on. */
-export type GameStateHistory = GameAction[];
+export type GameStateHistory = GameStateRound[];
 
 // -- State -----------------------------------------------------------------------
 export enum GameStatus {
@@ -53,6 +87,9 @@ export enum GameStatus {
 export type GameStateBase = {
   /** the spec of the game */
   spec: GameSpec;
+
+  /** the points that the actors have in the game */
+  points: GamePointsMap;
 };
 
 export type GameStateIdle = GameStateBase & {
@@ -65,9 +102,6 @@ export const isGameStateIdle = (state: GameState): state is GameStateIdle => sta
 
 export type GameStateInProgress = GameStateBase & {
   status: GameStatus.InProgress;
-
-  /** the current action number */
-  actionIndex: number;
 
   /** the history of the game */
   history: GameStateHistory;

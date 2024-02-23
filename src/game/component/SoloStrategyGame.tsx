@@ -27,7 +27,12 @@ const actorStrategy: ActorStrategy = {
 const gameSpec: GameSpec = {
   actors: [actorPlayer, actorStrategy],
 
-  maxActions: 10
+  maxRounds: 6,
+
+  splitSplitPoints: 3,
+  splitTakePoints: 0,
+  takeSplitPoints: 5,
+  takeTakePoints: 1,
 }
 
 // ********************************************************************************
