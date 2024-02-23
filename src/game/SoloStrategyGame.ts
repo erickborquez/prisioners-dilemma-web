@@ -34,8 +34,6 @@ export class SoloStrategyGame extends AbstractGame implements ISoloStrategyGame 
   /** called when the state changes. Executes the actor's strategy if it's the
    *  actor's turn */
   private async onState(state: GameState): Promise<void> {
-    console.log('state:', state);
-
     switch(state.status) {
       case GameStatus.Idle:
       case GameStatus.Ended: return/*nothing else to do*/;
