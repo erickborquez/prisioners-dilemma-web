@@ -1,98 +1,78 @@
-import { Button } from "@chakra-ui/react";
-import { useState } from "react"
+import { Box, Button, Flex, Spinner, Text } from "@chakra-ui/react";
 
-import { ActorPlayer, ActorStrategy, ActorStrategyType, ActorType } from "@/actor/type"
-import { useObservable } from "@/util/hook/useObservable";
+import { useMemo } from "react";
 
-import { ISoloStrategyGame, SoloStrategyGame } from "../SoloStrategyGame"
-import { GameActionType, GameSpec, GameStateEnded, GameStateIdle, GameStateInProgress } from "../type"
+import { ActorIdentifier } from "@/actor/type";
 
-// ********************************************************************************
-// TODO: use non-hardcoded data
-const actorPlayer: ActorPlayer = {
-  id: 'player',
-  type: ActorType.Player,
-
-  name: 'Player',
-};
-
-const actorStrategy: ActorStrategy = {
-  id: 'strategy',
-  type: ActorType.Strategy,
-
-  name: 'Strategy',
-  strategy: ActorStrategyType.AlwaysTake,
-};
-
-const gameSpec: GameSpec = {
-  actors: [actorPlayer, actorStrategy],
-
-  maxRounds: 6,
-
-  splitSplitPoints: 3,
-  splitTakePoints: 0,
-  takeSplitPoints: 5,
-  takeTakePoints: 1,
-}
+import { GameActionType, GameState, GameStatus } from "../type"
+import { ISoloStrategyGame } from "../SoloStrategyGame"
+import { getLastWonPoints } from "../util";
 
 // ********************************************************************************
-export const SoloStrategyGameComponent: React.FC = () => {
-  const [game] = useState(new SoloStrategyGame(gameSpec));
-  const [state] = useObservable('SoloStrategyGameComponent', () => game.onState$(), [game]);
-
-  if(!state) return <div>Loading...</div>;
-  let component: React.ReactNode;
-  switch(state.status) {
-    case 'idle':
-    case 'in-progress': component = <SoloStrategyGameIdleInProgressComponent game={game} state={state} />; break;
-    case 'ended': component = <SoloStrategyGameEndComponent game={game} state={state} />; break;
-  }
-  return (
-    <div>
-      <h1>Solo Strategy Game</h1>
-      {component}
-      <pre>{JSON.stringify(state, null, 2)}</pre>
-    </div>
-  );
-}
-
-// == Status ======================================================================
-// -- Idle / In Progress ----------------------------------------------------------
-interface SoloStrategyGameStatusProps {
+interface Props {
   game: ISoloStrategyGame;
+  state: GameState;
 
-  state: GameStateIdle | GameStateInProgress;
+  actorPlayerId: ActorIdentifier;
 }
-const SoloStrategyGameIdleInProgressComponent: React.FC<SoloStrategyGameStatusProps> = ({ game, state }) => {
-  const isPlayerTurn = state.actorId === actorPlayer.id;
 
-  const handleSplit = () => game.makeAction({ actorId: actorPlayer.id, action: GameActionType.Split });
-  const handleTake = () => game.makeAction({ actorId: actorPlayer.id, action: GameActionType.Take });
+export const SoloStrategyGameComponent: React.FC<Props> = ({ game, state, actorPlayerId }) => {
+  const opponent = useMemo(
+    () => game.spec.actors.find(actor => actor.id !== actorPlayerId)!,
+    [game, actorPlayerId]
+  );
+  
+  const isWaiting = state.status !== GameStatus.Ended && state.actorId !== actorPlayerId,
+        isPlayerTurn = state.status !== GameStatus.Ended && state.actorId === actorPlayerId;
 
+  const history = state.status === GameStatus.Idle ? [/*empty state*/] : state.history;
+  const lastReceivedPoints = getLastWonPoints(game.spec, history, actorPlayerId);
+
+  // == Handler ===================================================================
+  const handleSplit = () => game.makeAction({ actorId: actorPlayerId, action: GameActionType.Split });
+  const handleTake = () => game.makeAction({ actorId: actorPlayerId, action: GameActionType.Take });
+
+  // == UI ========================================================================
   return (
-    <div>
-      <h2>Game in Progress</h2>
+    <Flex direction='column'>
+      <Flex justifyContent='space-between' fontSize='24px' color='#444' fontWeight='600'>
+        <Box textAlign='center'>
+          <h3>{opponent.name}</h3>
+          <p>{state.points[opponent.id]}</p>
+        </Box>
+        <Box textAlign='center'>
+          <Text fontSize='20px'>Tu</Text>
+          <Text>
+            {state.points[actorPlayerId]}
+            {lastReceivedPoints !== null && (
+              <Text color='#0f0' fontSize='16px'>+{lastReceivedPoints}</Text>
+            )}
+          </Text>
+        </Box>
+      </Flex>
+
+      <Flex height='30vh' alignItems='center' justifyContent='center'>
+        {isWaiting && <Spinner size='lg'/>}
+        {isPlayerTurn && <Text fontSize='32px' color='#333'>Tu turno</Text>}
+      </Flex>
+      
       {isPlayerTurn && (
-        <div>
-          <Button onClick={handleSplit}>Split</Button>
-          <Button onClick={handleTake}>Take</Button>
-        </div>
+        <Flex alignItems='center' justifyContent='center' gap='16px' marginTop='40px'>
+          <Button size='lg' colorScheme='blue' onClick={handleSplit}>Compartir</Button>
+          <Button size='lg' colorScheme='blue' onClick={handleTake}>Robar</Button>
+        </Flex>
       )}
-    </div>
-  );
-}
 
-// -- Ended -----------------------------------------------------------------------
-interface SoloStrategyGameEndProps {
-  game: ISoloStrategyGame;
-
-  state: GameStateEnded;
-}
-
-const SoloStrategyGameEndComponent: React.FC<SoloStrategyGameEndProps> = ({ game, state }) => {
-  return (
-    <div>
-      <h2>Game Over</h2>
-    </div>
+      {state.status === GameStatus.Ended && (
+        <Flex
+          justifyContent='center'
+          marginTop='40px'
+          fontSize='32px'
+          color='#333'
+        >
+          Termino el juego
+        </Flex>
+      )}
+    </Flex>
   );
 }
