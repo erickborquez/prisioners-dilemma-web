@@ -53,7 +53,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-        <Box width='100%' maxWidth='400px' margin='auto' paddingTop='20vh'>
+        <Box width='100%' maxWidth='400px' margin='auto' padding='20vh 24px 0 24px' >
           {state && (
             <SoloStrategyGameComponent
               game={game}

@@ -35,13 +35,13 @@ export const SoloStrategyGameComponent: React.FC<Props> = ({ game, state, actorP
   // == UI ========================================================================
   return (
     <Flex direction='column'>
-      <Flex justifyContent='space-between' fontSize='24px' color='#444' fontWeight='600'>
+      <Flex justifyContent='space-between' fontSize='32px' color='#444' fontWeight='600'>
         <Box textAlign='center'>
-          <h3>{opponent.name}</h3>
-          <p>{state.points[opponent.id]}</p>
+          <Text>{opponent.name}</Text>
+          <Text>{state.points[opponent.id]}</Text>
         </Box>
         <Box textAlign='center'>
-          <Text fontSize='20px'>Tu</Text>
+          <Text>Tu</Text>
           <Text>
             {state.points[actorPlayerId]}
             {lastReceivedPoints !== null && (
@@ -53,7 +53,7 @@ export const SoloStrategyGameComponent: React.FC<Props> = ({ game, state, actorP
 
       <Flex height='30vh' alignItems='center' justifyContent='center'>
         {isWaiting && <Spinner size='lg'/>}
-        {isPlayerTurn && <Text fontSize='32px' color='#333'>Tu turno</Text>}
+        {isPlayerTurn && <Text fontSize='48px' color='#555'>Tu turno</Text>}
       </Flex>
       
       {isPlayerTurn && (
