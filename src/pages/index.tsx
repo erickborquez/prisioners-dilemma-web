@@ -7,6 +7,7 @@ import { useObservable } from "@/util/hook/useObservable";
 import { SoloStrategyGameComponent } from "@/game/component/SoloStrategyGame";
 import { SoloStrategyGame } from "@/game/SoloStrategyGame";
 import { GameSpec } from "@/game/type";
+import { getRandomName } from "@/util/name";
 
 // ********************************************************************************
 // TODO: use non-hardcoded data
@@ -14,21 +15,21 @@ const actorPlayer: ActorPlayer = {
   id: 'player',
   type: ActorType.Player,
 
-  name: 'Player',
+  name: 'Tú',
 };
 
 const actorStrategy: ActorStrategy = {
   id: 'strategy',
   type: ActorType.Strategy,
 
-  name: 'Strategy',
-  strategy: ActorStrategyType.AlwaysTake,
+  name: getRandomName(),
+  strategy: ActorStrategyType.Random,
 };
 
 const gameSpec: GameSpec = {
   actors: [actorPlayer, actorStrategy],
 
-  maxRounds: 6,
+  maxRounds: 50,
 
   splitSplitPoints: 3,
   splitTakePoints: 0,
