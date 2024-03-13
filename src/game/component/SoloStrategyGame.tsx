@@ -45,7 +45,7 @@ export const SoloStrategyGameComponent: React.FC<Props> = ({ game, state, actorP
           <Text>
             {state.points[actorPlayerId]}
             {lastReceivedPoints !== null && (
-              <Text color='#0f0' fontSize='16px'>+{lastReceivedPoints}</Text>
+              <Text as='span' color='#0f0' fontSize='16px'>+{lastReceivedPoints}</Text>
             )}
           </Text>
         </Box>
