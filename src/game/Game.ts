@@ -1,7 +1,8 @@
-import { BehaviorSubject } from "rxjs";
+import { BehaviorSubject, filter } from "rxjs";
 
-import { GameAction, GameSpec, GameState, GameStateIdle, GameStatus } from "./type";
+import { storeGameResult } from "./datastore";
 import { applyAction } from "./state";
+import { isGameStateEnded, GameAction, GameSpec, GameState, GameStateEnded, GameStateIdle, GameStatus, createGameResult } from "./type";
 
 // ********************************************************************************
 export interface IGame {
@@ -26,6 +27,11 @@ export class AbstractGame implements IGame {
   constructor(public readonly spec: GameSpec) {
     if(this.spec.actors.length !== 2) throw new Error('The game must have exactly two actors');
     this.state$ = new BehaviorSubject<GameState>(this.createInitialState());
+
+    const stateEnd$ = this.state$.pipe(
+      filter(isGameStateEnded)
+    );
+    stateEnd$.subscribe(state => this.onStateEnd(state));
   }
   
   // ------------------------------------------------------------------------------
@@ -37,6 +43,19 @@ export class AbstractGame implements IGame {
 
   // == Observable ================================================================
   public onState$(): BehaviorSubject<GameState> { return this.state$; }
+
+  // == Subscription ==============================================================
+  /** automatically store the game on the database once it's finished */
+  private async onStateEnd(gameState: GameStateEnded) {
+    
+    const gameResult = createGameResult(this.spec, gameState);
+
+    try {
+      await storeGameResult(gameResult);
+    } catch(error) {
+      console.error('Error storing game result', error);
+    }
+  }
 
   // == Public API ================================================================
   public makeAction(action: GameAction) {
