@@ -65,6 +65,11 @@ export const isCompleteRound = (round: GameStateRound): round is [GameAction, Ga
  *  and so on. */
 export type GameStateHistory = GameStateRound[];
 
+// a stringified version of the {@link GameStateHistory}
+export type GameStateHistoryResult = string/*alias*/;
+export const parseGameStateHistory = (history: GameStateHistoryResult): GameStateHistory => JSON.parse(history);
+export const createGameStateHistoryResult = (history: GameStateHistory): GameStateHistoryResult => JSON.stringify(history);
+
 export const isGameEnded = (spec: GameSpec, history: GameStateHistory): boolean => history.length >= spec.maxRounds && isCompleteRound(history[history.length - 1]);
 
 // -- State -----------------------------------------------------------------------
@@ -115,3 +120,31 @@ export type GameStateEnded = GameStateBase & {
 export const isGameStateEnded = (state: GameState): state is GameStateEnded => state.status === GameStatus.Ended;
 
 export type GameState = GameStateIdle | GameStateInProgress | GameStateEnded;
+
+// == Result ======================================================================
+export type GameResultIdentifier = string/*alias*/;
+
+// stores a reference with the final result of the game
+export type GameResult = {
+  // CHECK: add userId? App doesn't have auth so doesn't seem necessary 
+
+  spec: GameSpec;
+
+  /** the points that the actors have in the game */
+  points: GamePointsMap;
+
+  // NOTE: history is stored as a string since a nested array cannot be stored in 
+  //       Firestore. 
+  history: GameStateHistoryResult;
+};
+
+export const createGameResult = (spec: GameSpec, state: GameStateEnded): GameResult => {
+
+  return {
+    spec,
+
+    points: state.points,
+
+    history: createGameStateHistoryResult(state.history),
+  };
+}
