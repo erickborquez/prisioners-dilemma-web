@@ -1,4 +1,5 @@
 import { ActorStrategy } from "@/actor/type";
+import { delay } from "@/util/async";
 
 import { GameAction, GameState, GameStatus } from "../type";
 
@@ -21,6 +22,9 @@ export abstract class GameActorStrategy {
     // validate the state
     if(state.status !== GameStatus.InProgress) throw new Error(`Actor (${this.actor.id}) is not allowed to play in the current state: ${state.status}`);
     if(state.actorId !== this.actor.id) throw new Error(`The actor ${this.actor.id} is not allowed to play`);
+
+    // artificial delay
+    await delay(Math.min(1000/*1s*/, Math.random() * 3500/*3.5s*/));
 
     // create the action
     return this.createAction(state);
