@@ -14,9 +14,11 @@ interface Props {
   state: GameState;
 
   actorPlayerId: ActorIdentifier;
+
+  onRestart: () => void;
 }
 
-export const SoloStrategyGameComponent: React.FC<Props> = ({ game, state, actorPlayerId }) => {
+export const SoloStrategyGameComponent: React.FC<Props> = ({ game, state, actorPlayerId, onRestart }) => {
   const opponent = useMemo(
     () => game.spec.actors.find(actor => actor.id !== actorPlayerId)!,
     [game, actorPlayerId]
@@ -26,7 +28,11 @@ export const SoloStrategyGameComponent: React.FC<Props> = ({ game, state, actorP
         isPlayerTurn = state.status !== GameStatus.Ended && state.actorId === actorPlayerId;
 
   const history = state.status === GameStatus.Idle ? [/*empty state*/] : state.history;
-  const lastReceivedPoints = getLastWonPoints(game.spec, history, actorPlayerId);
+  const playerLastReceivedPoints = getLastWonPoints(game.spec, history, actorPlayerId),
+        opponentLastReceivedPoints = getLastWonPoints(game.spec, history, opponent.id);
+
+  const playerPoints = state.points[actorPlayerId],
+        opponentPoints = state.points[opponent.id];
 
   // == Handler ===================================================================
   const handleSplit = () => game.makeAction({ actorId: actorPlayerId, action: GameActionType.Split });
@@ -38,14 +44,19 @@ export const SoloStrategyGameComponent: React.FC<Props> = ({ game, state, actorP
       <Flex justifyContent='space-between' fontSize='32px' color='#444' fontWeight='600'>
         <Box textAlign='center'>
           <Text>{opponent.name}</Text>
-          <Text>{state.points[opponent.id]}</Text>
+          <Text>
+            {state.points[opponent.id]}
+            {opponentLastReceivedPoints !== null && (
+              <Text as='span' color='#0f0' fontSize='16px'>+{opponentLastReceivedPoints}</Text>
+            )}
+          </Text>
         </Box>
         <Box textAlign='center'>
           <Text>Tu</Text>
           <Text>
             {state.points[actorPlayerId]}
-            {lastReceivedPoints !== null && (
-              <Text as='span' color='#0f0' fontSize='16px'>+{lastReceivedPoints}</Text>
+            {playerLastReceivedPoints !== null && (
+              <Text as='span' color='#0f0' fontSize='16px'>+{playerLastReceivedPoints}</Text>
             )}
           </Text>
         </Box>
@@ -54,23 +65,29 @@ export const SoloStrategyGameComponent: React.FC<Props> = ({ game, state, actorP
       <Flex height='30vh' alignItems='center' justifyContent='center'>
         {isWaiting && <Spinner size='lg'/>}
         {isPlayerTurn && <Text fontSize='48px' color='#555'>Tu turno</Text>}
+        {state.status === GameStatus.Ended && (
+          <Flex
+            flexDirection='column'
+            alignItems='center'
+            justifyContent='center'
+            gap='32px'
+          >
+            {playerPoints > opponentPoints ? (
+              <Text fontSize='32px' color='#0f0'>¡Ganaste!</Text>
+            ) : playerPoints < opponentPoints ? (
+              <Text fontSize='32px' color='#f00'>¡Perdiste!</Text>
+            ) : (
+              <Text fontSize='32px' color='#555'>Empate</Text>
+            )}
+            <Button size='lg' colorScheme='blue' onClick={onRestart}>Buscar otro contrincante</Button>
+          </Flex>
+        )}
       </Flex>
       
       {isPlayerTurn && (
         <Flex alignItems='center' justifyContent='center' gap='16px' marginTop='40px'>
           <Button size='lg' colorScheme='blue' onClick={handleSplit}>Compartir</Button>
           <Button size='lg' colorScheme='blue' onClick={handleTake}>Robar</Button>
-        </Flex>
-      )}
-
-      {state.status === GameStatus.Ended && (
-        <Flex
-          justifyContent='center'
-          marginTop='40px'
-          fontSize='32px'
-          color='#333'
-        >
-          Termino el juego
         </Flex>
       )}
     </Flex>
