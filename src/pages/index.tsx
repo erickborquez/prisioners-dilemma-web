@@ -27,7 +27,7 @@ const gameSpecs = Object.entries(ActorStrategyType).map(([key, value], index) =>
     strategy: value,
   }],
 
-  maxRounds: 2,
+  maxRounds: 50,
 
   splitSplitPoints: 3,
   splitTakePoints: 0,
