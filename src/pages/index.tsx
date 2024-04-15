@@ -20,7 +20,7 @@ const actorPlayer: ActorPlayer = {
 };
 
 const gameSpecs = [
-  ActorStrategyType.Grofman,
+  ActorStrategyType.Hufford,
 ].map((strategy, index) => ({
   actors: [actorPlayer, {
     id: 'strategy',

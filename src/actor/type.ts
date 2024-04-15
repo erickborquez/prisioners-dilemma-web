@@ -33,6 +33,7 @@ export enum ActorStrategyType {
 
   Gladstein = 'Gladstein',
   Grofman = 'Grofman',
+  Hufford = 'Hufford',
   SecondByBlack = 'SecondByBlack',
   TitForTat = 'TitForTat',
 }
