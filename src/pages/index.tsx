@@ -8,6 +8,7 @@ import { SoloStrategyGame } from "@/game/SoloStrategyGame";
 import { useObservable } from "@/util/hook/useObservable";
 import { delay } from "@/util/async";
 import { useAsyncStatus } from "@/util/hook/useAsyncStatus";
+import { getRandomName } from "@/util/name";
 
 // ********************************************************************************
 // TODO: use non-hardcoded data
@@ -19,12 +20,13 @@ const actorPlayer: ActorPlayer = {
 };
 
 const gameSpecs = [
-  ActorStrategyType.SecondByBlack
+  ActorStrategyType.TitForTat,
 ].map((strategy, index) => ({
   actors: [actorPlayer, {
     id: 'strategy',
     type: ActorType.Strategy,
 
+    // name: getRandomName(),
     name: strategy,
     strategy,
   }],
@@ -74,7 +76,7 @@ export default function Home() {
     if(!canRestart) return/*nothing else to do*/;
     setIndex(index + 1);
   };
-
+console.log(state);
   return (
     <>
       <Head>

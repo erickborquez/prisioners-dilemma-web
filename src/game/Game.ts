@@ -47,7 +47,6 @@ export class AbstractGame implements IGame {
   // == Subscription ==============================================================
   /** automatically store the game on the database once it's finished */
   private async onStateEnd(gameState: GameStateEnded) {
-    
     const gameResult = createGameResult(this.spec, gameState);
 
     try {

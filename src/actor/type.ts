@@ -32,6 +32,7 @@ export enum ActorStrategyType {
   Probability = 'Probability p Cooperator',
 
   SecondByBlack = 'SecondByBlack',
+  TitForTat = 'TitForTat',
 }
 
 export type ActorStrategy = ActorBase & {
