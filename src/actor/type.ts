@@ -31,6 +31,7 @@ export enum ActorStrategyType {
   Random = 'random',
   Probability = 'Probability p Cooperator',
 
+  Gladstein = 'Gladstein',
   SecondByBlack = 'SecondByBlack',
   TitForTat = 'TitForTat',
 }

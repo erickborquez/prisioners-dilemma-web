@@ -20,7 +20,7 @@ const actorPlayer: ActorPlayer = {
 };
 
 const gameSpecs = [
-  ActorStrategyType.TitForTat,
+  ActorStrategyType.Gladstein,
 ].map((strategy, index) => ({
   actors: [actorPlayer, {
     id: 'strategy',
