@@ -20,18 +20,21 @@ const actorPlayer: ActorPlayer = {
 };
 
 const gameSpecs = [
+  ActorStrategyType.Gladstein,
+  ActorStrategyType.Grofman,
   ActorStrategyType.Hufford,
+  ActorStrategyType.SecondByBlack,
+  ActorStrategyType.TitForTat,
 ].map((strategy, index) => ({
   actors: [actorPlayer, {
     id: 'strategy',
     type: ActorType.Strategy,
 
-    // name: getRandomName(),
-    name: strategy,
+    name: getRandomName(),
     strategy,
   }],
 
-  maxRounds: 50,
+  maxRounds: 40,
 
   splitSplitPoints: 3,
   splitTakePoints: 0,
