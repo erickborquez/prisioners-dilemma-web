@@ -18,13 +18,15 @@ const actorPlayer: ActorPlayer = {
   name: 'Tú',
 };
 
-const gameSpecs = Object.entries(ActorStrategyType).map(([key, value], index) => ({
+const gameSpecs = [
+  ActorStrategyType.SecondByBlack
+].map((strategy, index) => ({
   actors: [actorPlayer, {
     id: 'strategy',
     type: ActorType.Strategy,
 
-    name: value,
-    strategy: value,
+    name: strategy,
+    strategy,
   }],
 
   maxRounds: 50,

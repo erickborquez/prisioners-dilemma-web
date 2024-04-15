@@ -30,6 +30,8 @@ export enum ActorStrategyType {
   AlwaysTake = 'always-take',
   Random = 'random',
   Probability = 'Probability p Cooperator',
+
+  SecondByBlack = 'SecondByBlack',
 }
 
 export type ActorStrategy = ActorBase & {

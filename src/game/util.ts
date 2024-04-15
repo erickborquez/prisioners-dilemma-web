@@ -26,3 +26,13 @@ export const getLastWonPoints = (spec: GameSpec, history: GameStateHistory, acto
 
   return null/*no points yet*/;
 }
+
+export const getOtherActorId = (spec: GameSpec, actorId: ActorIdentifier): ActorIdentifier => {
+  return spec.actors.find(actor => actor.id !== actorId)!.id;
+}
+
+export const getActorActions = (actorId: ActorIdentifier, history: GameStateHistory): GameActionType[] => {
+  return history
+    .map(([a, b]) => a.actorId === actorId ? a.action : b ? b.action : null)
+    .filter(action => action !== null) as GameActionType[];
+}

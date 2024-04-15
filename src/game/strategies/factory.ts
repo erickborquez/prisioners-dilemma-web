@@ -5,6 +5,7 @@ import { GameActorStrategyAlwaysSplit } from "./AlwaysSplit";
 import { GameActorStrategyAlwaysTake } from "./AlwaysTake";
 import { GameActorStrategyRandom } from "@/game/strategies/Random";
 import { GameActorStrategyProbablyTake } from "@/game/strategies/ProbablyTakes";
+import { GameActorStrategySecondByBlack } from "./SecondByBlack";
 
 // ********************************************************************************
 export const gameActorStrategyFactory = (actor: ActorStrategy): IGameActorStrategy => {
@@ -13,6 +14,8 @@ export const gameActorStrategyFactory = (actor: ActorStrategy): IGameActorStrate
     case ActorStrategyType.AlwaysTake: return new GameActorStrategyAlwaysTake(actor);
     case ActorStrategyType.Random: return new GameActorStrategyRandom(actor);
     case ActorStrategyType.Probability: return new GameActorStrategyProbablyTake(actor);
+
+    case ActorStrategyType.SecondByBlack: return new GameActorStrategySecondByBlack(actor);
     default: throw new Error(`Unknown strategy: ${actor.strategy}`);
   }
 }
