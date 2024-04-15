@@ -72,13 +72,7 @@ export const SoloStrategyGameComponent: React.FC<Props> = ({ game, state, actorP
             justifyContent='center'
             gap='32px'
           >
-            {playerPoints > opponentPoints ? (
-              <Text fontSize='32px' color='#0f0'>¡Ganaste!</Text>
-            ) : playerPoints < opponentPoints ? (
-              <Text fontSize='32px' color='#f00'>¡Perdiste!</Text>
-            ) : (
-              <Text fontSize='32px' color='#555'>Empate</Text>
-            )}
+            <Text fontSize='32px' color='#0c0'>¡Ganaste {state.points[actorPlayerId]} puntos!</Text>
             <Button size='lg' colorScheme='blue' onClick={onRestart}>Buscar otro contrincante</Button>
           </Flex>
         )}
