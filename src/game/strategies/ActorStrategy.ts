@@ -24,7 +24,7 @@ export abstract class GameActorStrategy {
     if(state.actorId !== this.actor.id) throw new Error(`The actor ${this.actor.id} is not allowed to play`);
 
     // artificial delay
-    await delay(Math.max(0/*1s*/, Math.random() * 0/*3.5s*/));
+    await delay(Math.max(0/*1s*/, Math.random() * 3500/*3.5s*/));
 
     // create the action
     return this.createAction(state);
