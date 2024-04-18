@@ -19,10 +19,8 @@ interface Props {
 }
 
 export const SoloStrategyGameComponent: React.FC<Props> = ({ game, state, actorPlayerId, onRestart }) => {
-  const opponent = useMemo(
-    () => game.spec.actors.find(actor => actor.id !== actorPlayerId)!,
-    [game, actorPlayerId]
-  );
+  const opponent = game.spec.actors.find(actor => actor.id !== actorPlayerId)!;
+  const player = game.spec.actors.find(actor => actor.id === actorPlayerId)!;
   
   const isWaiting = state.status !== GameStatus.Ended && state.actorId !== actorPlayerId,
         isPlayerTurn = state.status !== GameStatus.Ended && state.actorId === actorPlayerId;
@@ -30,9 +28,6 @@ export const SoloStrategyGameComponent: React.FC<Props> = ({ game, state, actorP
   const history = state.status === GameStatus.Idle ? [/*empty state*/] : state.history;
   const playerLastReceivedPoints = getLastWonPoints(game.spec, history, actorPlayerId),
         opponentLastReceivedPoints = getLastWonPoints(game.spec, history, opponent.id);
-
-  const playerPoints = state.points[actorPlayerId],
-        opponentPoints = state.points[opponent.id];
 
   // == Handler ===================================================================
   const handleSplit = () => game.makeAction({ actorId: actorPlayerId, action: GameActionType.Split });
@@ -52,7 +47,7 @@ export const SoloStrategyGameComponent: React.FC<Props> = ({ game, state, actorP
           </Text>
         </Box>
         <Box textAlign='center'>
-          <Text>Tu</Text>
+          <Text>{player.name}</Text>
           <Text>
             {state.points[actorPlayerId]}
             {playerLastReceivedPoints !== null && (

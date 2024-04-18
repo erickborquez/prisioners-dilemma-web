@@ -136,9 +136,12 @@ export type GameResult = {
   // NOTE: history is stored as a string since a nested array cannot be stored in 
   //       Firestore. 
   history: GameStateHistoryResult;
+
+  // an arbitrary message
+  message: string;
 };
 
-export const createGameResult = (spec: GameSpec, state: GameStateEnded): GameResult => {
+export const createGameResult = (spec: GameSpec, state: GameStateEnded, message: string): GameResult => {
 
   return {
     spec,
@@ -146,5 +149,7 @@ export const createGameResult = (spec: GameSpec, state: GameStateEnded): GameRes
     points: state.points,
 
     history: createGameStateHistoryResult(state.history),
+
+    message,
   };
 }

@@ -2,7 +2,7 @@ import { BehaviorSubject, filter } from "rxjs";
 
 import { storeGameResult } from "./datastore";
 import { applyAction } from "./state";
-import { isGameStateEnded, GameAction, GameSpec, GameState, GameStateEnded, GameStateIdle, GameStatus, createGameResult } from "./type";
+import { isGameStateEnded, GameAction, GameSpec, GameState, GameStateEnded, GameStateIdle, GameStatus, createGameResult, GameActionType } from "./type";
 
 // ********************************************************************************
 export interface IGame {
@@ -47,7 +47,13 @@ export class AbstractGame implements IGame {
   // == Subscription ==============================================================
   /** automatically store the game on the database once it's finished */
   private async onStateEnd(gameState: GameStateEnded) {
-    const gameResult = createGameResult(this.spec, gameState);
+    // hardcoded!!
+    const player = this.spec.actors[0];
+    const playerPoints = gameState.points[player.id];
+    const splitCount = gameState.history.filter(round => round[0].action === GameActionType.Split).length;
+    const message = `El jugador ${player.name} obtuvo ${playerPoints} puntos y coopero ${splitCount} veces.`
+
+    const gameResult = createGameResult(this.spec, gameState, message);
 
     try {
       await storeGameResult(gameResult);
